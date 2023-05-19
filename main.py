@@ -1,22 +1,27 @@
-import time
+result = []
 
-def measure_time(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        print(f"Function {func.__name__} execution time: {end_time - start_time:.4f} seconds")
-        return result
-    return wrapper
-@measure_time
-def test_func1():
-    time.sleep(1)
+def divider(a, b):
+    try:
+        if a < b:
+            raise ValueError("a must be greater than or equal to b")
+        if b > 100:
+            raise IndexError("b must be less than or equal to 100")
+        return a / b
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
+    except IndexError as ie:
+        print(f"IndexError: {ie}")
+    except Exception as e:
+        print(f"Exception: {e}")
+    return None
 
-@measure_time
-def test_func2():
-    for i in range(10000000):
-        pass
+data = {10: 2, 2: 5, "123": 4, 18: 0, 8: 4}
 
-test_func1()
-test_func2()
+for key in data:
+    try:
+        res = divider(key, data[key])
+        result.append(res)
+    except Exception as e:
+        print(f"Exception: {e}")
 
+print(result)
