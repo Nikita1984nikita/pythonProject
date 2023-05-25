@@ -1,27 +1,32 @@
-result = []
+import requests
+from bs4 import BeautifulSoup
 
-def divider(a, b):
-    try:
-        if a < b:
-            raise ValueError("a must be greater than or equal to b")
-        if b > 100:
-            raise IndexError("b must be less than or equal to 100")
-        return a / b
-    except ValueError as ve:
-        print(f"ValueError: {ve}")
-    except IndexError as ie:
-        print(f"IndexError: {ie}")
-    except Exception as e:
-        print(f"Exception: {e}")
-    return None
+class CurrencyConverter:
+    def __init__(self):
+        self.base_url = "https://bank.gov.ua"
 
-data = {10: 2, 2: 5, "123": 4, 18: 0, 8: 4}
+    def get_exchange_rate(self):
+        url = f"{self.base_url}/NBUStatService/v1/statdirectory/exchange?json"
+        response = requests.get(url)
+        data = response.json()
 
-for key in data:
-    try:
-        res = divider(key, data[key])
-        result.append(res)
-    except Exception as e:
-        print(f"Exception: {e}")
+        for currency in data:
+            if currency["cc"] == "USD":
+                exchange_rate = currency["rate"]
+                return float(exchange_rate)
 
-print(result)
+        raise ValueError("Курс доллара не найден")
+
+    def convert_to_usd(self, amount):
+        exchange_rate = self.get_exchange_rate()
+        usd_amount = amount / exchange_rate
+        return usd_amount
+
+
+converter = CurrencyConverter()
+
+currency_amount = float(input("Введите сумму в гривнах : "))
+
+usd_amount = converter.convert_to_usd(currency_amount)
+
+print("Сумма в долларах США:", usd_amount)
